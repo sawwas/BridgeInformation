@@ -20,7 +20,6 @@ class DatabaseHelper {
   static final PEDESTRIAN_BRIDGE_TAG = 'pedestrian_bridges'; //行人穿越橋
   static final FOOT_BRIDGES_TAG = 'footbridges'; //人行橋 - bridges 對象
   static Database? _database;
-  final _lock = Lock();
 
   DatabaseHelper._internal();
 
@@ -39,9 +38,6 @@ class DatabaseHelper {
       path,
       version: 1,
       onCreate: _onCreate,
-      onOpen: (db) async {
-        await db.execute('PRAGMA busy_timeout = 5000');
-      },
     );
   }
 
@@ -145,50 +141,46 @@ class DatabaseHelper {
 
   // 批量插入或更新橋樑數據
   Future<bool?>? insertOrUpdateBridges(List<Bridge> bridges) async {
-    return await _lock.synchronized(() async {
-      return await isolated<bool?>({
-        'bridges': bridges,
-      }, (maps) async {
-        Database db = await database;
-        await db.transaction((txn) async {
-          Batch batch = txn.batch();
-          for (var bridge in maps['bridges']) {
-            await txn.insert(BRIDGE_TAG, bridge.toJson(),
-                conflictAlgorithm: ConflictAlgorithm.replace);
-          }
-        });
-        if (db != null && db.isOpen) {
-          await db.close();
+    return await isolated<bool?>({
+      'bridges': bridges,
+    }, (maps) async {
+      Database db = await database;
+      await db.transaction((txn) async {
+        Batch batch = txn.batch();
+        for (var bridge in maps['bridges']) {
+          await txn.insert(BRIDGE_TAG, bridge.toJson(),
+              conflictAlgorithm: ConflictAlgorithm.replace);
         }
-        return true;
       });
+      if (db != null && db.isOpen) {
+        await db.close();
+      }
+      return true;
     });
   }
 
   // 批量插入或更新人行天橋數據
   Future<bool?>? insertOrUpdatePedestrianBridges(
       List<PedestrianBridge> pedestrianBridges) async {
-    return await _lock.synchronized(() async {
-      return await isolated<bool?>({
-        'pedestrianBridges': pedestrianBridges,
-      }, (maps) async {
-        Database db = await database;
-        await db.transaction((txn) async {
-          Batch batch = txn.batch();
-          for (var bridge in maps['pedestrianBridges']) {
-            var mapTemp = bridge.toJson();
-            mapTemp.remove('bridges');
-            var id = await txn.insert(PEDESTRIAN_BRIDGE_TAG, mapTemp,
-                conflictAlgorithm: ConflictAlgorithm.replace);
-            await insertOrUpdateFootBridges(bridge.bridges, id, txn);
-          }
-        });
-
-        if (db != null && db.isOpen) {
-          await db.close();
+    return await isolated<bool?>({
+      'pedestrianBridges': pedestrianBridges,
+    }, (maps) async {
+      Database db = await database;
+      await db.transaction((txn) async {
+        Batch batch = txn.batch();
+        for (var bridge in maps['pedestrianBridges']) {
+          var mapTemp = bridge.toJson();
+          mapTemp.remove('bridges');
+          var id = await txn.insert(PEDESTRIAN_BRIDGE_TAG, mapTemp,
+              conflictAlgorithm: ConflictAlgorithm.replace);
+          await insertOrUpdateFootBridges(bridge.bridges, id, txn);
         }
-        return true;
       });
+
+      if (db != null && db.isOpen) {
+        await db.close();
+      }
+      return true;
     });
   }
 
@@ -206,20 +198,17 @@ class DatabaseHelper {
 
   // 取得所有橋樑數據
   Future<Tuple2<List<Bridge>?, Database>?> getAllBridges() async {
-    return await _lock.synchronized(() async {
-      return await isolated<Tuple2<List<Bridge>?, Database>?>(null,
-          (maps) async {
-        try {
-          Database db = await database;
-          final List<Map<String, dynamic>> mapList = await db.query(BRIDGE_TAG);
-          var list = List.generate(mapList.length, (i) {
-            return Bridge.fromJson(mapList[i]);
-          });
-          return Tuple2(list, db);
-        } catch (e) {
-          print(e);
-        }
-      });
+    return await isolated<Tuple2<List<Bridge>?, Database>?>(null, (maps) async {
+      try {
+        Database db = await database;
+        final List<Map<String, dynamic>> mapList = await db.query(BRIDGE_TAG);
+        var list = List.generate(mapList.length, (i) {
+          return Bridge.fromJson(mapList[i]);
+        });
+        return Tuple2(list, db);
+      } catch (e) {
+        print(e);
+      }
     });
   }
 
