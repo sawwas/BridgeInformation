@@ -73,12 +73,10 @@ class BridgeService {
         final bridges =
             parseAndDecodeJson<Bridge>(bridgeResponse, downloadProgress: () {
           processedCount++;
-          downloadProgress.value = processedCount / totalCount;
         });
         var pedestrianBridges = parseAndDecodeJson<PedestrianBridge>(
             pedestrianResponse, downloadProgress: () {
           processedCount++;
-          downloadProgress.value = processedCount / totalCount;
         });
 
         pedestrianBridges = pedestrianBridges.map((json) {
@@ -105,8 +103,6 @@ class BridgeService {
         throw Exception('Failed to load data');
       }
     } else {
-      //非首次下載打開啟動頁獲取緩存數據庫數據，實時進度已裝載完成
-      downloadProgress.value = 1.0;
 
       // 返回數據庫數據
       return {
@@ -146,6 +142,4 @@ class BridgeService {
     return utf8.decode(s.runes.toList());
   }
 
-  // 首次下載並安裝打開啟動頁獲取api數據，實時進度展示
-  final ValueNotifier<double> downloadProgress = ValueNotifier(0.0);
 }

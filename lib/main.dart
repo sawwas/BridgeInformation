@@ -55,6 +55,7 @@ class MyApp extends ConsumerWidget {
         state: LocalizationProvider.of(context).state,
         child: MaterialApp.router(
           title: translate('app_name'),
+
           theme: ThemeData(
             colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
           ),

@@ -95,6 +95,7 @@ class HomeListWidget extends HookConsumerWidget {
         TextStyle(color: isExpandedColor(key) ? Colors.black : Colors.white);
 
     return Scaffold(
+      backgroundColor: Colors.transparent,
       body: Stack(
         children: [
           // 背景圖片
@@ -242,24 +243,19 @@ class HomeListWidget extends HookConsumerWidget {
                 ),
               ],
             ),
-            loading: () => ValueListenableBuilder<double>(
-              valueListenable: bridgesService.downloadProgress,
-              builder: (context, value, child) {
-                return Container(
-                  width: double.infinity,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      JumpingText(
-                        translate('data_init'),
-                        style: TextStyle(color: Colors.white, fontSize: 18.sp),
-                      ),
-                      SizedBox(height: 35.h),
-                    ],
+            loading: () => SizedBox(
+              width: double.infinity,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.end,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  JumpingText(
+                    translate('data_init'),
+                    style: TextStyle(color: Colors.white, fontSize: 18.sp),
                   ),
-                );
-              },
+                  SizedBox(height: 35.h),
+                ],
+              ),
             ),
             error: (error, stack) =>
                 Center(child: Text('Failed to load data: $error')),
