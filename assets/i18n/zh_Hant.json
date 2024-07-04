@@ -1,0 +1,15 @@
+{
+  "app_name": "台北市橋樑及人行陸橋資訊",
+  "group_limit": "團體限制：",
+  "group_no": "團體編號",
+  "data_init": "數據初始化中...",
+  "bridge_name": "橋名：",
+  "DesignEngineers": "設計工程師：",
+  "Address": "地址：",
+  "starting_point": "起始位置",
+  "bridge_start": "橋樑起點",
+  "ending_point": "結束位置",
+  "bridge_ending": "橋樑終點",
+  "bridge_position": "橋樑位置",
+  "bridge_detail_position": "橋樑具體位置"
+}

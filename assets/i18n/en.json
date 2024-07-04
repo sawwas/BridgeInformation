@@ -1,0 +1,15 @@
+{
+  "app_name": "Bridges & footbridges in Taipei",
+  "group_limit": "Group Limit:",
+  "group_no": "Group No.",
+  "data_init": "Data Initializing...",
+  "bridge_name": "Bridge Name:",
+  "DesignEngineers": "Design Engineers:",
+  "Address": "Address:",
+  "starting_point": "Starting Point",
+  "bridge_start": "Bridge Start",
+  "ending_point": "Ending Point",
+  "bridge_ending": "Bridge Ending",
+  "bridge_position": "Bridge Position",
+  "bridge_detail_position": "Bridge Detail Position"
+}

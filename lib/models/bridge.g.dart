@@ -1,0 +1,73 @@
+// GENERATED CODE - DO NOT MODIFY BY HAND
+
+part of 'bridge.dart';
+
+// **************************************************************************
+// JsonSerializableGenerator
+// **************************************************************************
+
+Bridge _$BridgeFromJson(Map<String, dynamic> json) => Bridge(
+      ID: (json['ID'] as num?)?.toInt() ?? 0,
+      nonBridge: json['non_bridge'] as String? ?? '',
+      bridgeId: json['bridge_id'] as String? ?? '',
+      bridgeName: json['bridge_name'] as String? ?? '',
+      bridgeNameEng: json['bridge_name_eng'] as String? ?? '',
+      adm: json['adm'] as String? ?? '',
+      section: json['section'] as String? ?? '',
+      CountyCode: (json['CountyCode'] as num?)?.toInt() ?? 0,
+      AreaCode: (json['AreaCode'] as num?)?.toInt() ?? 0,
+      route: json['route'] as String? ?? '',
+      riverCross: json['river_cross'] as String? ?? '',
+      doubleBridge: json['double_bridge'] as String? ?? '',
+      designer: json['designer'] as String? ?? '',
+      engineer: json['engineer'] as String? ?? '',
+      builder: json['builder'] as String? ?? '',
+      inspectRate: (json['inspect_rate'] as num?)?.toInt() ?? 0,
+      locational: json['locational'] as String? ?? '',
+      structure: json['structure'] as String? ?? '',
+      totalLength: (json['total_length'] as num?)?.toDouble() ?? 0,
+      area: (json['area'] as num?)?.toDouble() ?? 0,
+      spans: (json['spans'] as num?)?.toInt() ?? 0,
+      widthMax: (json['width_max'] as num?)?.toDouble() ?? 0,
+      widthMin: (json['width_min'] as num?)?.toDouble() ?? 0,
+      driveways: (json['driveways'] as num?)?.toInt() ?? 0,
+      longitudeStart: (json['Longitude_start'] as num?)?.toDouble() ?? 0,
+      latitudeStart: (json['Latitude_start'] as num?)?.toDouble() ?? 0,
+      longitudeEnd: (json['Longitude_end'] as num?)?.toDouble() ?? 0,
+      latitudeEnd: (json['Latitude_end'] as num?)?.toDouble() ?? 0,
+      objLongitude: (json['Obj_Longitude'] as num?)?.toDouble() ?? 0,
+      objLatitude: (json['Obj_Latitude'] as num?)?.toDouble() ?? 0,
+    );
+
+Map<String, dynamic> _$BridgeToJson(Bridge instance) => <String, dynamic>{
+      'ID': instance.ID,
+      'non_bridge': instance.nonBridge,
+      'bridge_id': instance.bridgeId,
+      'bridge_name': instance.bridgeName,
+      'bridge_name_eng': instance.bridgeNameEng,
+      'adm': instance.adm,
+      'section': instance.section,
+      'CountyCode': instance.CountyCode,
+      'AreaCode': instance.AreaCode,
+      'route': instance.route,
+      'river_cross': instance.riverCross,
+      'double_bridge': instance.doubleBridge,
+      'designer': instance.designer,
+      'engineer': instance.engineer,
+      'builder': instance.builder,
+      'inspect_rate': instance.inspectRate,
+      'locational': instance.locational,
+      'structure': instance.structure,
+      'total_length': instance.totalLength,
+      'area': instance.area,
+      'spans': instance.spans,
+      'width_max': instance.widthMax,
+      'width_min': instance.widthMin,
+      'driveways': instance.driveways,
+      'Longitude_start': instance.longitudeStart,
+      'Latitude_start': instance.latitudeStart,
+      'Longitude_end': instance.longitudeEnd,
+      'Latitude_end': instance.latitudeEnd,
+      'Obj_Longitude': instance.objLongitude,
+      'Obj_Latitude': instance.objLatitude,
+    };
