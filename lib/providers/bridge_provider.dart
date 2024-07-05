@@ -2,6 +2,7 @@ import 'package:bridge_information/models/pedestrian_bridge.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import '../models/bridge.dart';
 import '../services/bridge_service.dart';
+import '../utils/preferences_util.dart';
 
 /// 作者：SanDaoHai
 /// 日期：2024/07/02
@@ -30,7 +31,8 @@ final groupedBridgesProvider =
 class GroupedBridgesNotifier extends StateNotifier<Map<String, List<dynamic>>> {
   GroupedBridgesNotifier(Map<String, dynamic> bridges) : super({}) {
     // 分組橋樑和人行天橋資料 20條一組
-    groupBridges(bridges, 20);
+    groupBridges(
+        bridges, (Preferences.prefs.getDouble('sliderValue') ?? 20.0).toInt());
   }
 
   // 分組橋樑和人行天橋資料並限制每組的數量
