@@ -39,14 +39,7 @@ class BridgeService {
         pedestrianBridges =
             value[1] as Tuple2<List<PedestrianBridge>?, Database>?;
         // 關閉資料庫
-        if (bridgesTuple?.item2 != null &&
-            bridgesTuple!.item2.isOpen) {
-          await bridgesTuple!.item2.close();
-        }
-        if (pedestrianBridges?.item2 != null &&
-            pedestrianBridges!.item2.isOpen) {
-          await pedestrianBridges!.item2.close();
-        }
+
 
       }
     });

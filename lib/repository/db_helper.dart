@@ -20,6 +20,7 @@ class DatabaseHelper {
   static final PEDESTRIAN_BRIDGE_TAG = 'pedestrian_bridges'; //行人穿越橋
   static final FOOT_BRIDGES_TAG = 'footbridges'; //人行橋 - bridges 對象
   static Database? _database;
+  static final _lock = Lock();
 
   DatabaseHelper._internal();
 
@@ -27,24 +28,32 @@ class DatabaseHelper {
 
   Future<Database> get database async {
     if (_database != null) return _database!;
-    _database = await _initDatabase();
+    await _lock.synchronized(() async {
+      if (_database == null) {
+        _database = await _initDatabase();
+      }
+    });
     return _database!;
   }
 
   Future<Database> _initDatabase() async {
     Directory documentsDirectory = await getApplicationDocumentsDirectory();
     String path = join(documentsDirectory.path, 'bridge_database.db');
-    return await openDatabase(
+    Database db = await openDatabase(
       path,
       version: 1,
       onCreate: _onCreate,
     );
+
+    await db.rawQuery('PRAGMA busy_timeout = 5000');
+
+    return db;
   }
 
   Future _onCreate(Database db, int version) async {
     // 橋樑表單
     await db.execute('''
-      CREATE TABLE $BRIDGE_TAG (
+      CREATE TABLE IF NOT EXISTS $BRIDGE_TAG (
       ID INTEGER PRIMARY KEY,
       non_bridge TEXT,
       bridge_id TEXT,
@@ -79,7 +88,7 @@ class DatabaseHelper {
     ''');
     // 行人穿越橋表單
     await db.execute('''
-      CREATE TABLE $PEDESTRIAN_BRIDGE_TAG (
+      CREATE TABLE IF NOT EXISTS $PEDESTRIAN_BRIDGE_TAG (
         ID INTEGER PRIMARY KEY,
         Footbridge_name TEXT,
         Footbridge_id TEXT,
@@ -99,7 +108,7 @@ class DatabaseHelper {
 
     // 人行橋 - bridges 對象表單
     await db.execute('''
-      CREATE TABLE $FOOT_BRIDGES_TAG (
+      CREATE TABLE IF NOT EXISTS $FOOT_BRIDGES_TAG (
         BridgeNo TEXT,
         Length REAL,
         Area REAL,
@@ -145,17 +154,20 @@ class DatabaseHelper {
       'bridges': bridges,
     }, (maps) async {
       Database db = await database;
-      await db.transaction((txn) async {
-        Batch batch = txn.batch();
-        for (var bridge in maps['bridges']) {
-          await txn.insert(BRIDGE_TAG, bridge.toJson(),
-              conflictAlgorithm: ConflictAlgorithm.replace);
-        }
-      });
-      if (db != null && db.isOpen) {
-        await db.close();
+      if (db.isOpen) {
+        await db.transaction((txn) async {
+          Batch batch = txn.batch();
+          for (var bridge in maps['bridges']) {
+            await txn.insert(BRIDGE_TAG, bridge.toJson(),
+                conflictAlgorithm: ConflictAlgorithm.replace);
+          }
+        });
+
+        return true;
+      } else {
+        print('Database is not open');
+        return false;
       }
-      return true;
     });
   }
 
@@ -166,21 +178,23 @@ class DatabaseHelper {
       'pedestrianBridges': pedestrianBridges,
     }, (maps) async {
       Database db = await database;
-      await db.transaction((txn) async {
-        Batch batch = txn.batch();
-        for (var bridge in maps['pedestrianBridges']) {
-          var mapTemp = bridge.toJson();
-          mapTemp.remove('bridges');
-          var id = await txn.insert(PEDESTRIAN_BRIDGE_TAG, mapTemp,
-              conflictAlgorithm: ConflictAlgorithm.replace);
-          await insertOrUpdateFootBridges(bridge.bridges, id, txn);
-        }
-      });
+      if (db.isOpen) {
+        await db.transaction((txn) async {
+          Batch batch = txn.batch();
+          for (var bridge in maps['pedestrianBridges']) {
+            var mapTemp = bridge.toJson();
+            mapTemp.remove('bridges');
+            var id = await txn.insert(PEDESTRIAN_BRIDGE_TAG, mapTemp,
+                conflictAlgorithm: ConflictAlgorithm.replace);
+            await insertOrUpdateFootBridges(bridge.bridges, id, txn);
+          }
+        });
 
-      if (db != null && db.isOpen) {
-        await db.close();
+        return true;
+      } else {
+        print('Database is not open');
+        return false;
       }
-      return true;
     });
   }
 
@@ -201,13 +215,19 @@ class DatabaseHelper {
     return await isolated<Tuple2<List<Bridge>?, Database>?>(null, (maps) async {
       try {
         Database db = await database;
-        final List<Map<String, dynamic>> mapList = await db.query(BRIDGE_TAG);
-        var list = List.generate(mapList.length, (i) {
-          return Bridge.fromJson(mapList[i]);
-        });
-        return Tuple2(list, db);
+        if (db.isOpen) {
+          final List<Map<String, dynamic>> mapList = await db.query(BRIDGE_TAG);
+          var list = List.generate(mapList.length, (i) {
+            return Bridge.fromJson(mapList[i]);
+          });
+          return Tuple2(list, db);
+        } else {
+          print('Database is not open');
+          return null;
+        }
       } catch (e) {
         print(e);
+        return null;
       }
     });
   }
@@ -219,29 +239,35 @@ class DatabaseHelper {
         (maps) async {
       try {
         Database db = await database;
-        final List<Map<String, dynamic>> maps =
-            await db.query(PEDESTRIAN_BRIDGE_TAG);
+        if (db.isOpen) {
+          final List<Map<String, dynamic>> maps =
+              await db.query(PEDESTRIAN_BRIDGE_TAG);
 
-        List<PedestrianBridge>? pedestrianBridges = [];
-        for (var map in maps) {
-          final List<Map<String, dynamic>> bridgeMaps = await db.query(
-            FOOT_BRIDGES_TAG,
-            where: 'pedestrian_bridge_id = ?',
-            whereArgs: [map['ID']],
-          );
+          List<PedestrianBridge>? pedestrianBridges = [];
+          for (var map in maps) {
+            final List<Map<String, dynamic>> bridgeMaps = await db.query(
+              FOOT_BRIDGES_TAG,
+              where: 'pedestrian_bridge_id = ?',
+              whereArgs: [map['ID']],
+            );
 
-          List<BridgesPede> bridges = bridgeMaps
-              .map((bridgeMap) => BridgesPede.fromJson(bridgeMap))
-              .toList();
+            List<BridgesPede> bridges = bridgeMaps
+                .map((bridgeMap) => BridgesPede.fromJson(bridgeMap))
+                .toList();
 
-          PedestrianBridge pedestrianBridge = PedestrianBridge.fromJson(map);
-          pedestrianBridge = pedestrianBridge.copyWith(bridges: bridges);
+            PedestrianBridge pedestrianBridge = PedestrianBridge.fromJson(map);
+            pedestrianBridge = pedestrianBridge.copyWith(bridges: bridges);
 
-          pedestrianBridges.add(pedestrianBridge);
+            pedestrianBridges.add(pedestrianBridge);
+          }
+          return Tuple2(pedestrianBridges, db);
+        } else {
+          print('Database is not open');
+          return null;
         }
-        return Tuple2(pedestrianBridges, db);
       } catch (e) {
         print(e);
+        return null;
       }
     });
   }
