@@ -19,21 +19,23 @@ class DatabaseHelper {
   static final BRIDGE_TAG = 'bridges'; //橋樑
   static final PEDESTRIAN_BRIDGE_TAG = 'pedestrian_bridges'; //行人穿越橋
   static final FOOT_BRIDGES_TAG = 'footbridges'; //人行橋 - bridges 對象
-  static Database? _database;
-  static final _lock = Lock();
+  Database? _database;
+  final _lock = Lock();
 
   DatabaseHelper._internal();
 
   factory DatabaseHelper() => _instance;
 
-  Future<Database> get database async {
-    if (_database != null) return _database!;
-    await _lock.synchronized(() async {
-      if (_database == null) {
-        _database = await _initDatabase();
-      }
-    });
-    return _database!;
+  // 獲取數據庫實例
+  Database? get database => _database;
+
+  // 初始化數據庫
+  Future<void> initDatabase() async {
+    if (_database == null) {
+      await _lock.synchronized(() async {
+        _database ??= await _initDatabase();
+      });
+    }
   }
 
   Future<Database> _initDatabase() async {
@@ -153,7 +155,7 @@ class DatabaseHelper {
     return await isolated<bool?>({
       'bridges': bridges,
     }, (maps) async {
-      Database db = await database;
+      Database db =  database!;
       if (db.isOpen) {
         await db.transaction((txn) async {
           Batch batch = txn.batch();
@@ -177,7 +179,7 @@ class DatabaseHelper {
     return await isolated<bool?>({
       'pedestrianBridges': pedestrianBridges,
     }, (maps) async {
-      Database db = await database;
+      Database db =  database!;
       if (db.isOpen) {
         await db.transaction((txn) async {
           Batch batch = txn.batch();
@@ -214,7 +216,7 @@ class DatabaseHelper {
   Future<Tuple2<List<Bridge>?, Database>?> getAllBridges() async {
     return await isolated<Tuple2<List<Bridge>?, Database>?>(null, (maps) async {
       try {
-        Database db = await database;
+        Database db =  database!;
         if (db.isOpen) {
           final List<Map<String, dynamic>> mapList = await db.query(BRIDGE_TAG);
           var list = List.generate(mapList.length, (i) {
@@ -238,7 +240,7 @@ class DatabaseHelper {
     return await isolated<Tuple2<List<PedestrianBridge>?, Database>?>(null,
         (maps) async {
       try {
-        Database db = await database;
+        Database db =  database!;
         if (db.isOpen) {
           final List<Map<String, dynamic>> maps =
               await db.query(PEDESTRIAN_BRIDGE_TAG);

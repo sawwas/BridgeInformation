@@ -5,6 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
 import 'package:sqflite/sqflite.dart';
 import 'package:tuple/tuple.dart';
+import '../main.dart';
 import '../models/bridge.dart';
 import '../repository/db_helper.dart';
 
@@ -93,7 +94,6 @@ class BridgeService {
         throw Exception('Failed to load data');
       }
     } else {
-
       // 返回數據庫數據
       return {
         'RoadBridges': bridgesTuple?.item1,
@@ -131,5 +131,4 @@ class BridgeService {
   String decodeString(String s) {
     return utf8.decode(s.runes.toList());
   }
-
 }

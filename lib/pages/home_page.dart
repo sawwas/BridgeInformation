@@ -59,9 +59,6 @@ class HomeInherited extends InheritedWidget {
 // Map<String, bool> expandedTemp = {};
 
 class HomeListWidget extends HookConsumerWidget {
-  //調度api服務，用於獲取首次安裝緩存數據進度
-  final BridgeService bridgesService = BridgeService();
-
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     // 獲取橋樑和人行天橋列表
