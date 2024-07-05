@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:bridge_information/models/bridge.dart';
 import 'package:bridge_information/models/pedestrian_bridge.dart';
 import 'package:flutter/material.dart';
@@ -225,8 +227,9 @@ class HomeListWidget extends HookConsumerWidget {
                   ),
                 ),
                 Container(
-                  margin:
-                      EdgeInsets.only(bottom: bottomPadding + 16.h, top: 30.h),
+                  margin: EdgeInsets.only(
+                      bottom: bottomPadding + (Platform.isAndroid ? 16.h : 0),
+                      top: 30.h),
                   child: SliderTheme(
                     data: SliderThemeData(
                         thumbColor: Colors.transparent,
