@@ -31,7 +31,6 @@ main() async {
 // 新安裝app時，初始化shared_preferences，並取得橋樑｜人行陸橋資料保存到SQLite
 Future<void> initializeApp() async {
   BridgeService bridgeService = BridgeService();
-  await bridgeService.fetchBridges();
   Future.wait([Preferences().init(), bridgeService.fetchBridges()]);
 }
 
