@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:bridge_information/utils/widgets/safe_screen_util.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -93,7 +95,7 @@ class _DetailPageState extends ConsumerState<DetailPage> {
             itemWidget(
                 title: translate('Address'),
                 subTitle: data is Bridge ? data.locational : data?.Route ?? ""),
-            SizedBox(height: bottomPadding),
+            SizedBox(height: bottomPadding + (Platform.isAndroid ? 16.h : 0)),
           ],
         ),
       ),

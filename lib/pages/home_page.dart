@@ -106,9 +106,9 @@ class HomeListWidget extends HookConsumerWidget {
             ? [
                 Shadow(
                   offset: const Offset(2.0, 2.0),
-                  blurRadius: 10.0,
+                  blurRadius: 3.0,
                   color: isExpandedColor(key)
-                      ? Colors.white.withOpacity(0.6)
+                      ? Colors.white.withOpacity(0.1)
                       : Colors.white,
                 ),
               ]
@@ -116,7 +116,6 @@ class HomeListWidget extends HookConsumerWidget {
 
     return Scaffold(
       backgroundColor: Colors.transparent,
-      resizeToAvoidBottomInset: false,
       body: Stack(
         children: [
           // 背景圖片
