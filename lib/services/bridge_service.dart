@@ -38,9 +38,6 @@ class BridgeService {
         bridgesTuple = value[0] as Tuple2<List<Bridge>?, Database>?;
         pedestrianBridges =
             value[1] as Tuple2<List<PedestrianBridge>?, Database>?;
-        // 關閉資料庫
-
-
       }
     });
 
