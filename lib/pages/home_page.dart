@@ -98,8 +98,19 @@ class HomeListWidget extends HookConsumerWidget {
     }, []);
 
     // 是否展開item項目 文字樣式
-    isExpandedTextStyle(key) =>
-        TextStyle(color: isExpandedColor(key) ? Colors.black : Colors.white);
+    isExpandedTextStyle(key) => TextStyle(
+        color: isExpandedColor(key) ? Colors.black : Colors.white,
+        shadows: isExpandedColor(key)
+            ? [
+                Shadow(
+                  offset: const Offset(2.0, 2.0),
+                  blurRadius: 10.0,
+                  color: isExpandedColor(key)
+                      ? Colors.white.withOpacity(0.6)
+                      : Colors.white,
+                ),
+              ]
+            : []);
 
     return Scaffold(
       backgroundColor: Colors.transparent,
