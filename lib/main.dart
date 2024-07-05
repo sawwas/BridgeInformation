@@ -1,4 +1,3 @@
-import 'package:bridge_information/pages/home_page.dart';
 import 'package:bridge_information/providers/router/app_route_information_parser.dart';
 import 'package:bridge_information/providers/router/app_router_delegate.dart';
 import 'package:bridge_information/providers/router/app_state.dart';
@@ -12,16 +11,14 @@ import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_translate/flutter_translate.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:sqflite/sqflite.dart';
 
 main() async {
+  // 啟動頁面
   FlutterNativeSplash.preserve(
       widgetsBinding: WidgetsFlutterBinding.ensureInitialized());
 
   // 初始化shared_preferences，並取得橋樑｜人行陸橋資料保存到SQLite
   await initializeApp();
-
-  FlutterNativeSplash.remove();
 
   var delegate = await LocalizationDelegate.create(
     fallbackLocale: 'en',

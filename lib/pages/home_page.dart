@@ -2,6 +2,8 @@ import 'package:bridge_information/models/bridge.dart';
 import 'package:bridge_information/models/pedestrian_bridge.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:flutter_native_splash/cli_commands.dart';
+import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_translate/flutter_translate.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -39,11 +41,11 @@ class HomeInherited extends InheritedWidget {
   final void Function(Map<String, dynamic> data) onDetailsSelected;
   final HomePageState state;
 
-  HomeInherited(
-      {required this.onDetailsSelected,
+  const HomeInherited(
+      {super.key,
+      required this.onDetailsSelected,
       required this.state,
-      required Widget child})
-      : super(child: child);
+      required super.child});
 
   @override
   bool updateShouldNotify(covariant InheritedWidget oldWidget) {
@@ -80,11 +82,19 @@ class HomeListWidget extends HookConsumerWidget {
         initialScrollOffset: HomeInherited.of(context).state.scrollPosition);
 
     useEffect(() {
+      // 移除啟動頁面
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        Future.delayed(const Duration(milliseconds: 1000), () {
+          FlutterNativeSplash.remove();
+        });
+      });
+
       _scrollController.addListener(() {
         // 保存滾動位置
         HomeInherited.of(context).state.scrollPosition =
             _scrollController.position.pixels;
       });
+      return null;
     }, []);
 
     // 是否展開item項目 文字樣式
@@ -268,7 +278,7 @@ Widget placeBG() {
   return Positioned.fill(
     child: Image.asset(
       'assets/bridge_icon.jpg',
-      fit: BoxFit.cover,
+      fit: BoxFit.fill,
     ),
   );
 }
