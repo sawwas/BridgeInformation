@@ -103,6 +103,7 @@ class HomeListWidget extends HookConsumerWidget {
 
     return Scaffold(
       backgroundColor: Colors.transparent,
+      resizeToAvoidBottomInset: false,
       body: Stack(
         children: [
           // 背景圖片
@@ -213,7 +214,8 @@ class HomeListWidget extends HookConsumerWidget {
                   ),
                 ),
                 Container(
-                  margin: EdgeInsets.only(bottom: bottomPadding, top: 30.h),
+                  margin:
+                      EdgeInsets.only(bottom: bottomPadding + 16.h, top: 30.h),
                   child: SliderTheme(
                     data: SliderThemeData(
                         thumbColor: Colors.transparent,

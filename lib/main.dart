@@ -5,6 +5,7 @@ import 'package:bridge_information/repository/db_helper.dart';
 import 'package:bridge_information/services/bridge_service.dart';
 import 'package:bridge_information/utils/preferences_util.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
@@ -39,6 +40,13 @@ Future<void> initializeApp() async {
     Preferences().init(),
   ]);
   bridgeService.fetchBridges();
+  // 隱藏系統狀態欄
+  SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
+      overlays: [SystemUiOverlay.top]);
+  SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
+    systemNavigationBarColor: Colors.transparent,
+    statusBarColor: Colors.transparent,
+  ));
 }
 
 // 應用路由狀態管理
